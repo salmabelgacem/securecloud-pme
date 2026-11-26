@@ -52,7 +52,8 @@ jobs:
         with:
           python-version: "3.12"
       - name: Installer les dependances (verrouillees par hash)
-        run: pip install --require-hashes --only-binary :all: -r app/requirements.txt
+        run: |
+          pip install --require-hashes --only-binary :all: -r app/requirements.txt
       - name: Installer Snyk CLI (binaire verifie par sha256)
         uses: snyk/actions/setup@9adf32b1121593767fc3c057af55b55db032dc04 # v1.0.0
       - name: Scanner les dependances
