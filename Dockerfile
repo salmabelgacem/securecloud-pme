@@ -13,8 +13,7 @@ WORKDIR /app
 
 # Dépendances d'abord (meilleur cache Docker)
 COPY app/requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --require-hashes --only-binary :all: -r requirements.txt
 
 # Code de l'application
 COPY app/app.py .

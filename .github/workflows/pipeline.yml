@@ -51,10 +51,10 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.12"
-      - name: Installer les dependances
-        run: pip install -r app/requirements.txt
-      - name: Installer Snyk CLI
-        run: npm install -g snyk
+      - name: Installer les dependances (verrouillees par hash)
+        run: pip install --require-hashes --only-binary :all: -r app/requirements.txt
+      - name: Installer Snyk CLI (binaire verifie par sha256)
+        uses: snyk/actions/setup@9adf32b1121593767fc3c057af55b55db032dc04 # v1.0.0
       - name: Scanner les dependances
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
@@ -71,13 +71,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-        with:
-          python-version: "3.12"
-      - name: Installer Checkov
-        run: pip install checkov
       - name: Scanner Terraform et Dockerfile
-        run: checkov -d . --framework terraform dockerfile --compact --quiet
+        uses: bridgecrewio/checkov-action@b782b35c8411ff565b881fba67ceebdb426d7dc4 # v12.3147.0
+        with:
+          directory: .
+          framework: terraform,dockerfile
+          output_format: cli
+          compact: true
+          quiet: true
 
   # ---------- 5. Image : build + Trivy + ZAP ----------
   build-scan:
