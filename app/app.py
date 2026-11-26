@@ -13,7 +13,7 @@ csrf = CSRFProtect(app)
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger("securecloud")
 
-MESSAGE = "SecureCloud PME - application en ligne"
+MESSAGE = "SecureCloud PME - application en ligne (v2, deployee par le pipeline)"
 
 
 @app.after_request
