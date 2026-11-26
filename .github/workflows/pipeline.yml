@@ -27,14 +27,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # ---------- 2. Analyse du code (SAST) ----------
+    # ---------- 2. Tests unitaires + analyse du code (SAST) ----------
   sonarcloud:
-    name: SonarCloud (SAST)
+    name: Tests + SonarCloud (SAST)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - name: Installer les dependances (verrouillees par hash)
+        run: |
+          pip install --require-hashes --only-binary :all: -r app/requirements.txt -r requirements-dev.txt
+      - name: Tests unitaires + couverture
+        run: |
+          python -m pytest --cov=app --cov-report=xml:coverage.xml
       - uses: SonarSource/sonarqube-scan-action@70bad232163b09d998ea0707ee80c0ec80798c16 # v8.5.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
